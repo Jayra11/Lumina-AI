@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, documents, chats, messages, visualSummaries, documentChunks, InsertDocument, InsertChat, InsertMessage, InsertVisualSummary } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,110 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Document queries
+export async function getUserDocuments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(documents).where(eq(documents.userId, userId));
+}
+
+export async function getDocumentById(documentId: number, userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(documents)
+    .where(and(eq(documents.id, documentId), eq(documents.userId, userId)))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function createDocument(doc: InsertDocument) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(documents).values(doc);
+  return result;
+}
+
+// Chat queries
+export async function getChatsByDocument(documentId: number, userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(chats)
+    .where(and(eq(chats.documentId, documentId), eq(chats.userId, userId)));
+}
+
+export async function createChat(chat: InsertChat) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(chats).values(chat);
+  return result;
+}
+
+export async function getChatById(chatId: number, userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(chats)
+    .where(and(eq(chats.id, chatId), eq(chats.userId, userId)))
+    .limit(1);
+  return result[0] || null;
+}
+
+// Message queries
+export async function getMessagesByChat(chatId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(messages)
+    .where(eq(messages.chatId, chatId))
+    .orderBy(messages.createdAt);
+}
+
+export async function createMessage(msg: InsertMessage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(messages).values(msg);
+}
+
+export async function updateMessage(messageId: number, content: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db
+    .update(messages)
+    .set({ content })
+    .where(eq(messages.id, messageId));
+}
+
+// Visual summary queries
+export async function createVisualSummary(summary: InsertVisualSummary) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(visualSummaries).values(summary);
+}
+
+export async function getVisualSummariesByDocument(documentId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(visualSummaries)
+    .where(eq(visualSummaries.documentId, documentId));
+}
+
+// Document chunk queries
+export async function createDocumentChunk(chunk: { documentId: number; chunkIndex: number; text: string; embedding?: number[] }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(documentChunks).values(chunk);
+}
+
+export async function getDocumentChunks(documentId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(documentChunks).where(eq(documentChunks.documentId, documentId));
+}
