@@ -3,6 +3,8 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { AIChatBox } from "@/components/AIChatBox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { VoiceInput } from "@/components/VoiceInput";
+import { ImageAnalyzer } from "@/components/ImageAnalyzer";
 import { trpc } from "@/lib/trpc";
 import { FileText, Download, Sparkles, Mic, Image as ImageIcon, Loader2, ArrowLeft } from "lucide-react";
 import { useParams, useLocation } from "wouter";
@@ -26,6 +28,8 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [chatId, setChatId] = useState<number | null>(null);
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
 
   // Fetch document
   const { data: documentData, isLoading: docLoading } = trpc.documents.get.useQuery(
@@ -264,6 +268,7 @@ export default function Chat() {
               variant="outline"
               className="gap-2"
               disabled={isLoading}
+              onClick={() => setIsVoiceOpen(true)}
             >
               <Mic className="w-4 h-4" />
               Voice Input
@@ -273,6 +278,7 @@ export default function Chat() {
               variant="outline"
               className="gap-2"
               disabled={isLoading}
+              onClick={() => setIsImageOpen(true)}
             >
               <ImageIcon className="w-4 h-4" />
               Analyze Image
@@ -288,6 +294,28 @@ export default function Chat() {
             </Button>
           </div>
         </motion.div>
+
+        {/* Voice Input Dialog */}
+        <VoiceInput
+          isOpen={isVoiceOpen}
+          onOpenChange={setIsVoiceOpen}
+          onTranscribed={(text) => handleSendMessage(text)}
+        />
+
+        {/* Image Analyzer Dialog */}
+        <ImageAnalyzer
+          isOpen={isImageOpen}
+          onOpenChange={setIsImageOpen}
+          onAnalysisComplete={(analysis) => {
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "assistant",
+                content: `**Image Analysis:**\n\n${analysis}`,
+              },
+            ]);
+          }}
+        />
       </div>
     </DashboardLayout>
   );
