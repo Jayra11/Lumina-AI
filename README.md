@@ -2,7 +2,7 @@
 
 > **Your AI Document Intelligence Platform** - Upload documents, ask questions, get instant insights powered by advanced RAG, streaming LLMs, and multi-modal AI.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Active-brightgreen?style=for-the-badge)](https://3000-i1z05jpgykwo62nb1tpwn-66bf89aa.sg1.manus.computer)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Active-brightgreen?style=for-the-badge)](https://luminastud-njkc7div.manus.space)
 [![GitHub](https://img.shields.io/badge/GitHub-Jayra11%2FLumina--AI-blue?style=for-the-badge&logo=github)](https://github.com/Jayra11/Lumina-AI)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
@@ -10,7 +10,9 @@
 
 ## 🚀 Live Demo
 
-**🔗 [Access the Live Application](https://3000-i1z05jpgykwo62nb1tpwn-66bf89aa.sg1.manus.computer)**
+**🔗 [Access the Live Application](https://luminastud-njkc7div.manus.space)**
+
+✨ **Live URL:** https://luminastud-njkc7div.manus.space
 
 Sign in and start uploading documents to experience the full power of AI-driven document intelligence!
 
@@ -263,6 +265,7 @@ transcribeVoice(audioUrl: string) → { text: string }
 |--------|-------|
 | **Streaming** | Real-time LLM output |
 | **Load Time** | < 2s (optimized) |
+| **Live URL** | luminastud-njkc7div.manus.space |
 | **Database** | Indexed queries |
 | **Images** | Responsive & optimized |
 | **Cache** | Browser + server-side |
